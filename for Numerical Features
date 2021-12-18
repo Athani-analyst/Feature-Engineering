@@ -1,0 +1,122 @@
+import pandas as pd,numpy as np,os
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+os.chdir('D:\machine learning\Raw data')
+
+os.listdir()
+
+df=pd.read_csv('Titanic_data.csv',usecols=['Age','Fare','Survived'])
+
+df.head()
+
+df.isnull().sum()
+
+df.isnull().mean()
+
+df['Age'].isnull().sum()
+
+df['Age'].dropna().sample(df['Age'].isnull().sum(),random_state=0)
+
+df[df['Age'].isnull()].index
+
+
+df[df['Age'].isnull()].index
+
+def impute_nan(df,variable,median):
+    df[variable+"_median"]=df[variable].fillna(median)
+    df[variable+"_random"]=df[variable]
+    ##It will have the random sample to fill the na
+    random_sample=df[variable].dropna().sample(df[variable].isnull().sum(),random_state=0)
+    ##pandas need to have same index in order to merge the dataset
+    random_sample.index=df[df[variable].isnull()].index
+    df.loc[df[variable].isnull(),variable+'_random']=random_sample
+
+median=df.Age.median()
+
+
+impute_nan(df,"Age",median)
+
+
+df.head() 
+
+fig = plt.figure()
+ax = fig.add_subplot(111)
+df['Age'].plot(kind='kde', ax=ax)
+df.Age_median.plot(kind='kde', ax=ax, color='red')
+df.Age_random.plot(kind='kde', ax=ax, color='green')
+lines, labels = ax.get_legend_handles_labels()
+ax.legend(lines, labels, loc='best')
+
+df=pd.read_csv('Titanic_data.csv',usecols=['Age','Fare','Survived'])
+df[:5]
+ 
+
+df['Age_new']=np.where(df['Age'].isnull(),1,0)
+
+df[:10]
+
+
+df["Age"].median()
+
+df["Age"].fillna(df["Age"].median(),inplace=True)
+
+df[:10]
+
+#### Advantages
+1.Easy to implement
+2.Captures the importance of missing values
+
+Disadvantages
+1. Creating Additional Features(Curse of Dimensionality)
+
+# End of Distribution imputation
+
+df=pd.read_csv('Titanic_data.csv',usecols=['Age','Fare','Survived'])
+df[:5]
+ 
+
+df.Age.hist(bins=50)
+
+extreme=df.Age.mean()+3*df.Age.std()
+
+import seaborn as sea
+sea.boxplot('Age',data=df)
+
+def impute_nan(df,variable,median,extreme):
+    df['variable_extrm_val'] =df[variable].fillna(extreme)
+    df[variable].fillna(median,inplace=True)    
+
+
+impute_nan(df,'Age',df.Age.median(),extreme)
+
+
+df.head(10)
+
+df['Age'].hist(bins=50)
+
+
+df['variable_extrm_val'].hist(bins=50)
+
+
+sea.boxplot('variable_extrm_val',data=df)
+
+
+# Arbitrary Value Imputation
+this technique was derived from kaggle competition It consists of replacing NAN by an arbitrary value
+
+df=pd.read_csv('Titanic_data.csv',usecols=['Age','Fare','Survived'])
+df[:5]
+ 
+
+def impute_nan(df,variable):
+    df[variable+'_zero']=df[variable].fillna(0)
+    df[variable+'_hundred']=df[variable].fillna(100)
+
+df['Age'].hist(bins=50)
+
+impute_nan(df,"Age")
+
+df
+
+
